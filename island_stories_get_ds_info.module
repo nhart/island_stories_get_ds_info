@@ -1,0 +1,41 @@
+<?php
+
+// $Id$
+
+/**
+ * @file
+ * Configuration module for islandora_solr_search.module
+ */
+
+function island_stories_get_ds_info_menu() {
+
+    $items = array();
+
+
+    $items['island_stories_get_ds_info'] = array(
+        'title' => t('Island Stories GET DS Info'),
+       	'page callback' => 'island_stories_get_ds_info',        
+        'type' => MENU_CALLBACK,
+        'access arguments' => array('view fedora collection')
+    );
+    return $items;
+}
+
+
+function island_stories_get_ds_info($pid, $dsID, $attr) {
+	$output = 0;
+    if($pid && $dsID) {
+        
+        module_load_include('inc', 'fedora_repository', 'api/fedora_item');
+        $item = new Fedora_Item($pid);
+        $dataStreamInfo = $item->get_datastream_info($dsID);
+        
+        if($attr == "size") {
+        	$content_size = $dataStreamInfo->datastream->size;
+        	if($content_size) {
+        		$output = $dataStreamInfo->datastream->size;
+        	}
+    	}
+    }
+    echo $output;
+}
